@@ -1,3 +1,6 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_project/firebase_auth/auth_interface.dart';
+import 'package:firebase_project/firebase_auth/custom_firebase_auth.dart';
 import 'package:firebase_project/remote_config/custom_remote_config.dart';
 import 'package:firebase_project/remote_config/custom_visible_rc_widget.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +15,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool _isLoading = false;
+  final AuthInterface _auth = CustomFirebaseAuth();
+  var controllerUser = TextEditingController();
+  var controllerPass = TextEditingController();
+
+  String? erroMsg;
+
   @override
   Widget build(BuildContext context) {
     setState(() {});
@@ -27,15 +37,61 @@ class _HomeState extends State<Home> {
         child: Column(
           verticalDirection: VerticalDirection.down,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('Bem vindo a home page',
-                  style:
-                      TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+            TextFormField(
+              controller: controllerUser,
+              decoration: const InputDecoration(
+                label: Text('Usuário'),
+              ),
+            ),
+            TextFormField(
+              controller: controllerPass,
+              decoration: const InputDecoration(
+                label: Text('Senha'),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String user = controllerUser.text;
+                String pass = controllerPass.text;
+
+                var result = await _auth.login(user, pass);
+                if (result.isSuccess) {
+                  setState(() => erroMsg = null);
+                  print('Sucess Login');
+                } else {
+                  setState(() => erroMsg = result.msgError);
+                }
+              },
+              child: const Text('Acessar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String user = controllerUser.text;
+                String pass = controllerUser.text;
+
+                var result = await _auth.register(user, pass);
+                if (result.isSuccess) {
+                  setState(() => erroMsg = null);
+                  print('Sucess Register');
+                } else{
+                  setState(() =>erroMsg = result.msgError);
+                }
+              },
+              child: const Text('Register'),
+            ),
+            if(erroMsg !=null) Text(erroMsg!),
+            ElevatedButton(
+              onPressed: () {
+                FirebaseCrashlytics.instance
+                    .log("Ocorreu uma Exception manual!");
+                throw Exception('Testar Erro manual');
+              },
+              child: const Text('Btn'),
             ),
             CustomVisibleRCWidget(
               rmKey: 'RC',
-              defaultValue: CustomRemoteConfig().getValueOrDefault(key: 'NewHome', defaultValue: false),
+              defaultValue: CustomRemoteConfig()
+                  .getValueOrDefault(key: 'NewHome', defaultValue: false),
               child: Container(
                 height: 100,
                 width: 100,
@@ -48,6 +104,7 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await CustomRemoteConfig().forceFetch();
+          setState(() {});
           print('Executou o botao');
         },
       ),

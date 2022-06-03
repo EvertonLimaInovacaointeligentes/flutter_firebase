@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_project/firebase_messaging/custom_firebase_messaging.dart';
 import 'package:firebase_project/pages/home.dart';
 import 'package:firebase_project/remote_config/custom_remote_config.dart';
@@ -7,26 +10,19 @@ import 'package:flutter/material.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await CustomRemoteConfig().initialize();
-  await CustomFirebaseMessaging().inicialize(
-    callback: () => CustomRemoteConfig().forceFetch(),
-  );
-  await CustomFirebaseMessaging().getTokenFirebase();
+  runZonedGuarded(() async{
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    await CustomRemoteConfig().initialize();
+    await CustomFirebaseMessaging().inicialize(
+      callback: () => CustomRemoteConfig().forceFetch(),
+    );
+    await CustomFirebaseMessaging().getTokenFirebase();
+    //FirebaseCrashlytics.instance.crash();
+    FlutterError.onError= FirebaseCrashlytics.instance.recordFlutterError;
+    runApp(const MyApp());
+  }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 
-  //projeto melhorado abaixo
-  //WidgetsFlutterBinding.ensureInitialized();
-
-  //await Firebase.initializeApp();
-
-  //await CustomRemoteConfig().initialize();
-
-  //await CustomFirebaseMessaging().inicialize(
-  //callback: () => CustomRemoteConfig().forceFetch(),
-  // );
-  //await CustomFirebaseMessaging().getTokenFirebase();
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
