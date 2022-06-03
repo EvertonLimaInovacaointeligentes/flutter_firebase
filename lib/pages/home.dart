@@ -15,7 +15,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool _isLoading = false;
   final AuthInterface _auth = CustomFirebaseAuth();
   var controllerUser = TextEditingController();
   var controllerPass = TextEditingController();

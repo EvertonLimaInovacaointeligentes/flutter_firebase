@@ -17,7 +17,7 @@ void main() async {
     await CustomFirebaseMessaging().inicialize(
       callback: () => CustomRemoteConfig().forceFetch(),
     );
-    await CustomFirebaseMessaging().getTokenFirebase();
+    //await CustomFirebaseMessaging().getTokenFirebase();
     //FirebaseCrashlytics.instance.crash();
     FlutterError.onError= FirebaseCrashlytics.instance.recordFlutterError;
     runApp(const MyApp());
