@@ -34,35 +34,9 @@ class _HomeState extends State<Home> {
       ),
       body: SafeArea(
         child: Column(
-          verticalDirection: VerticalDirection.down,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextFormField(
-              controller: controllerUser,
-              decoration: const InputDecoration(
-                label: Text('Usuário'),
-              ),
-            ),
-            TextFormField(
-              controller: controllerPass,
-              decoration: const InputDecoration(
-                label: Text('Senha'),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                String user = controllerUser.text;
-                String pass = controllerPass.text;
-
-                var result = await _auth.login(user, pass);
-                if (result.isSuccess) {
-                  setState(() => erroMsg = null);
-                  print('Sucess Login');
-                } else {
-                  setState(() => erroMsg = result.msgError);
-                }
-              },
-              child: const Text('Acessar'),
-            ),
             ElevatedButton(
               onPressed: () async {
                 String user = controllerUser.text;
@@ -72,13 +46,12 @@ class _HomeState extends State<Home> {
                 if (result.isSuccess) {
                   setState(() => erroMsg = null);
                   print('Sucess Register');
-                } else{
-                  setState(() =>erroMsg = result.msgError);
+                } else {
+                  setState(() => erroMsg = result.msgError);
                 }
               },
               child: const Text('Register'),
             ),
-            if(erroMsg !=null) Text(erroMsg!),
             ElevatedButton(
               onPressed: () {
                 FirebaseCrashlytics.instance
@@ -90,11 +63,14 @@ class _HomeState extends State<Home> {
             CustomVisibleRCWidget(
               rmKey: 'RC',
               defaultValue: CustomRemoteConfig()
-                  .getValueOrDefault(key: 'NewHome', defaultValue: false),
-              child: Container(
-                height: 100,
-                width: 100,
-                color: Colors.blue,
+                  .getValueOrDefault(key: 'RC', defaultValue: false),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  color: Colors.blue,
+                ),
               ),
             ),
           ],

@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_project/firebase_messaging/custom_firebase_messaging.dart';
 import 'package:firebase_project/pages/home.dart';
+import 'package:firebase_project/pages/login.dart';
 import 'package:firebase_project/remote_config/custom_remote_config.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ void main() async {
     await CustomFirebaseMessaging().inicialize(
       callback: () => CustomRemoteConfig().forceFetch(),
     );
-    //await CustomFirebaseMessaging().getTokenFirebase();
+    await CustomFirebaseMessaging().getTokenFirebase();
     //FirebaseCrashlytics.instance.crash();
     FlutterError.onError= FirebaseCrashlytics.instance.recordFlutterError;
     runApp(const MyApp());
@@ -35,8 +36,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/home',
+      initialRoute: '/login',
       routes: {
+        '/login':(_) => const Login(title: 'LoginPage'),
         '/home': (_) => const Home(title: 'HomePage'),
         '/virtual': (_) => Scaffold(
               appBar: AppBar(
